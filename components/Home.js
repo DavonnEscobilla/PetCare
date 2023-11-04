@@ -7,8 +7,7 @@ const Home = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.welcomeText}>🏡 Welcome to Your Home Screen 🏡</Text>
-        </View>
-      
+      </View>
 
       <View style={styles.content}>
         <Text>This is your main content</Text>
@@ -31,12 +30,18 @@ const Home = ({ navigation }) => {
 
         <TouchableOpacity
           style={styles.button}
+          onPress={() => navigation.navigate('Search')}
+        >
+          <Icon name="search" size={20} color="white" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button}
           onPress={() => navigation.navigate('Intro')}
         >
           <Icon name="sign-out" size={20} color="white" />
         </TouchableOpacity>
       </View>
-
     </View>
   );
 };
