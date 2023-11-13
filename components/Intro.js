@@ -1,3 +1,4 @@
+// Intro.js
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
@@ -5,7 +6,7 @@ const Intro = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../Images/cat.png')}
+        source={require('../Images/logo.png')}
         style={styles.logo}
       />
       <TouchableOpacity
@@ -14,12 +15,10 @@ const Intro = ({ navigation }) => {
       >
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <Text> or </Text>
       <TouchableOpacity
-        style={styles.button}
         onPress={() => navigation.navigate('Signup')}
       >
-        <Text style={styles.buttonText}>Sign Up</Text>
+        <Text style={styles.signupText}>Create an account</Text>
       </TouchableOpacity>
     </View>
   );
@@ -32,8 +31,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 600,
+    height: 600,
     resizeMode: 'contain',
   },
   heading: {
@@ -46,9 +45,9 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   button: {
-    backgroundColor: 'black', 
+    backgroundColor: '#D14E86',
     width: 200,
-    height: 50, 
+    height: 50,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 5,
@@ -56,9 +55,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonText: {
-    color: 'white', 
+    color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  signupText: {
+    textDecorationLine: 'underline',
+    color: 'black',
+    fontSize: 18,
+    marginTop: 10,
   },
 });
 

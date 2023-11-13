@@ -6,7 +6,8 @@ import Intro from './components/Intro';
 import Auth from './components/Auth';
 import Home from './components/Home';
 import Splash2 from './components/Splash2';
-import PetInput from './components/PetInput'; // Import PetInput component
+import PetInput from './components/PetInput';
+import HomeSplash from './components/HomeSplash';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,7 +15,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash">
-        <Stack.Screen name=" " component={SplashScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="HomeSplash" component={HomeSplash} options={{ headerShown: false }} />
         <Stack.Screen name="Intro" component={Intro} options={{ headerShown: false }}/>
         <Stack.Screen name="Login" component={Auth} options={{ headerShown: false }}/>
         <Stack.Screen name="Signup" component={Auth} options={{ headerShown: false }}/>

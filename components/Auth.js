@@ -2,8 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { auth } from '../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Auth = ({ route, navigation }) => {
   const [email, setEmail] = useState('');
@@ -22,6 +21,7 @@ const Auth = ({ route, navigation }) => {
           console.log('Signed up successfully');
         } else {
           console.log('Passwords do not match');
+          return;
         }
       }
       navigation.navigate('Splash2');
@@ -32,9 +32,28 @@ const Auth = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.heading}>{isLogin ? 'Login' : 'Sign Up'}</Text>
-      </View>
+      {isLogin ? (
+        <View style={styles.header}>
+          <Text style={styles.heading}>Welcome back! </Text>
+          <View style={styles.messageContainer}>
+            <Text style={styles.msgText}>Login below or</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+              <Text style={styles.signupText}>create an account</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : (
+        <View style={styles.header}>
+          <Text style={styles.heading}>Sign up</Text>
+          <View style={styles.messageContainer}>
+            <Text style={styles.msgText}>Already have an account?</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+              <Text style={styles.signupText}>Login now!</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
       <TextInput
         placeholder="Email"
         value={email}
@@ -57,10 +76,7 @@ const Auth = ({ route, navigation }) => {
           style={styles.input}
         />
       )}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleAuth}
-      >
+      <TouchableOpacity style={styles.button} onPress={handleAuth}>
         <Text style={styles.buttonText}>{isLogin ? 'Login' : 'Sign Up'}</Text>
       </TouchableOpacity>
     </View>
@@ -74,13 +90,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     marginBottom: 20,
   },
   heading: {
-    fontSize: 24,
+    fontSize: 42,
     fontWeight: 'bold',
+    color: '#D14E86'
+  },
+  messageContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  msgText: {
+    color: 'black',
+    fontSize: 18,
+    marginLeft: 5,
+  },
+  signupText: {
+    textDecorationLine: 'underline',
+    color: 'black',
+    fontSize: 18,
+    marginLeft: 5,
   },
   input: {
     width: '80%',
@@ -92,7 +125,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   button: {
-    backgroundColor: 'black',
+    backgroundColor: '#D14E86',
     width: '80%',
     alignItems: 'center',
     justifyContent: 'center',
