@@ -1,16 +1,14 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import PetProfiles from './homeComponents/petProfiles';
 
 const Home = ({ navigation }) => {
   const handleSignOut = () => {
-    // Implement your sign-out logic here
     console.log('Signing out...');
   };
 
   const handleAddProfile = () => {
-    // Implement logic to add a new pet profile
     console.log('Add a new pet profile...');
   };
 
@@ -52,7 +50,7 @@ const Home = ({ navigation }) => {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Search')}
+          onPress={() => navigation.navigate('MagnifyingGlassDog')}
         >
           <Icon name="search" size={30} color="black" />
         </TouchableOpacity>

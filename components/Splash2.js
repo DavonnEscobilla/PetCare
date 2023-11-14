@@ -13,9 +13,9 @@ const Splash2 = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Starting your pet's journey...</Text>
+      <Text style={styles.textMsg}>Starting your pet's journey...</Text>
       <Image
-        source={require('../Images/100.gif')}
+        source={require('../Images/start.gif')}
         style={styles.logo}
       />
     </View>
@@ -36,6 +36,12 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginTop: 20,
+  },
+
+  textMsg: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#D14E86'
   },
 });
 

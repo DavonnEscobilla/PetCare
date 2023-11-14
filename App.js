@@ -1,13 +1,13 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SplashScreen from './components/SplashScreen';
 import Intro from './components/Intro';
 import Auth from './components/Auth';
 import Home from './components/Home';
 import Splash2 from './components/Splash2';
 import PetInput from './components/PetInput';
 import HomeSplash from './components/HomeSplash';
+import MagnifyingGlassDog from './components/MagnifyingGlassDog';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +22,8 @@ const App = () => {
         <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
         <Stack.Screen name="Splash2" component={Splash2} options={{ headerShown: false }}/>
         <Stack.Screen name="PetInput" component={PetInput} options={{ headerShown: false }}/>
+        <Stack.Screen name="MagnifyingGlassDog" component={MagnifyingGlassDog} options={{ headerShown: false }}/>
+
       </Stack.Navigator>
     </NavigationContainer>
   );
