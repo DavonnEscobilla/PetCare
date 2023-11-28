@@ -8,6 +8,8 @@ import Splash2 from './components/Splash2';
 import PetInput from './components/PetInput';
 import HomeSplash from './components/HomeSplash';
 import MagnifyingGlassDog from './components/MagnifyingGlassDog';
+import UserProfile from './components/UserProfile';
+import Post from './components/Post';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +25,8 @@ const App = () => {
         <Stack.Screen name="Splash2" component={Splash2} options={{ headerShown: false }}/>
         <Stack.Screen name="PetInput" component={PetInput} options={{ headerShown: false }}/>
         <Stack.Screen name="MagnifyingGlassDog" component={MagnifyingGlassDog} options={{ headerShown: false }}/>
+        <Stack.Screen name="UserProfile" component={UserProfile} options={{ headerShown: false }}/>
+        <Stack.Screen name="Post" component={Post} options={{ headerShown: false }}/>
 
       </Stack.Navigator>
     </NavigationContainer>

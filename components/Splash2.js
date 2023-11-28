@@ -13,7 +13,12 @@ const Splash2 = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.textMsg}>Starting your pet's journey...</Text>
+      <View style={styles.textContainer}>
+        <Text style={[styles.heading, { color: '#D14E86' }]}>Start your pet's</Text>
+        <View style={{ alignItems: 'center' }}>
+          <Text style={[styles.heading, { color: '#D14E86' }]}>journey.</Text>
+        </View>
+      </View>
       <Image
         source={require('../Images/start.gif')}
         style={styles.logo}
@@ -29,20 +34,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
   },
+  textContainer: {
+    // flex: 1,
+    justifyContent: 'center',
+    marginTop: 100,
+    marginBottom: 80,
+  },
   logo: {
-    width: 200,
-    height: 200,
+    width: 300,
+    height: 300,
     resizeMode: 'contain',
+    marginBottom: 5,
+    marginTop: 70, 
   },
-  loader: {
-    marginTop: 20,
-  },
-
-  textMsg: {
-    fontSize: 32,
+  heading: {
+    fontSize: 30,
     fontWeight: 'bold',
-    color: '#D14E86'
   },
 });
+
 
 export default Splash2;
