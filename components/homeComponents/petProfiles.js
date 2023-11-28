@@ -13,34 +13,39 @@ const PetProfiles = () => {
         },
         {
             id: 0,
-            name: 'Primo',
-            image: require('../../Images/petprofiles/primo.jpg'),
-        },
-        {
-            id: 0,
             name: 'Smudge',
             image: require('../../Images/petprofiles/smudge.jpg'),
         },
         {
-            id: 0,
-            name: 'Smudge',
-            image: require('../../Images/petprofiles/smudge.jpg'),
-        },
-        {
-            id: 0,
-            name: 'Smudge',
-            image: require('../../Images/petprofiles/smudge.jpg'),
-        },
-        {
-            id: 0,
-            name: 'Smudge',
-            image: require('../../Images/petprofiles/smudge.jpg'),
-        },
-        {
-            id: 0,
-            name: 'Smudge',
-            image: require('../../Images/petprofiles/smudge.jpg'),
-        },
+          id: 1,
+          name: 'Primo',
+          image: require('../../Images/petprofiles/primo.jpg'),
+      },
+      {
+          id: 0,
+          name: 'Smudge',
+          image: require('../../Images/petprofiles/smudge.jpg'),
+      },
+      {
+        id: 1,
+        name: 'Primo',
+        image: require('../../Images/petprofiles/primo.jpg'),
+    },
+    {
+        id: 0,
+        name: 'Smudge',
+        image: require('../../Images/petprofiles/smudge.jpg'),
+    },
+    {
+      id: 1,
+      name: 'Primo',
+      image: require('../../Images/petprofiles/primo.jpg'),
+  },
+  {
+      id: 0,
+      name: 'Smudge',
+      image: require('../../Images/petprofiles/smudge.jpg'),
+  },
     ];
 
     return (
@@ -70,7 +75,7 @@ const PetProfiles = () => {
                         right: 10,
                         zIndex: 1,
                       }}>
-                      <Entypo
+                      {/* <Entypo
                         name="circle-with-plus"
                         style={{
                           fontSize: 20,
@@ -78,7 +83,7 @@ const PetProfiles = () => {
                           backgroundColor: 'white',
                           borderRadius: 100,
                         }}
-                      />
+                      /> */}
                     </View>
                   ) : null}
                   <View
