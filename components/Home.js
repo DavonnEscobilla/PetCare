@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import PetProfiles from './homeComponents/petProfiles';
 
 const Home = ({ navigation }) => {
+  const [posts, setPosts] = useState([]);
   const handleSignOut = () => {
     console.log('Signing out...');
   };
@@ -12,6 +13,9 @@ const Home = ({ navigation }) => {
     console.log('Add a new pet profile...');
   };
 
+  const handleAddPost = (post) => {
+    setPosts(currentPosts => [post, ...currentPosts]);
+  };
   
   return (
     <View style={styles.homeContainer}>
@@ -43,8 +47,22 @@ const Home = ({ navigation }) => {
           style={styles.postIcon}
           onPress={() => navigation.navigate('Post')}
         >
-          <Icon name='paw' size={50} color="#D14E86" />
-        </TouchableOpacity>
+
+        <ScrollView style={styles.scrollView}>
+        {posts.map((post, index) => (
+          <View key={index} style={styles.postContainer}>
+            <Text>{post.content}</Text>
+          </View>
+        ))}
+      </ScrollView>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+      onPress={() => navigation.navigate('Post', { onAddPost: handleAddPost })}
+      style={styles.postIcon}
+    >
+      <Icon name='paw' size={50} color="#D14E86" />
+    </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -116,7 +134,13 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingLeft: 20,
   },
-postIcon: {
+  postContainer: {
+    backgroundColor: '#f0f0f0',
+    padding: 15,
+    marginVertical: 5,
+    borderRadius: 10,
+  },
+  postIcon: {
   backgroundColor: 'transparent', 
     position: 'absolute',
     bottom: 20,
