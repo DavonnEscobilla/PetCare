@@ -1,23 +1,29 @@
 import React, { useState } from 'react';
-import { View, Image, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity, TextInput, Keyboard } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Linking } from 'react-native'; // Import Linking
 
 const MagnifyingGlassDog = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = () => {
+    Keyboard.dismiss(); // Dismiss the keyboard if open
+    const encodedQuery = encodeURIComponent(searchQuery);
+    const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
+    Linking.openURL(googleSearchUrl).catch(err => console.error("An error occurred", err));
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
         <Image source={require('../Images/pic.png')} style={styles.image} />
       </View>
-
       <TouchableOpacity
         style={styles.profileIcon}
         onPress={() => navigation.navigate('UserProfile')}
       >
         <Icon name="user-circle-o" size={30} color="black" />
       </TouchableOpacity>
-
       <TouchableOpacity
         style={styles.circle}
         onPress={() => navigation.navigate('Home')}
@@ -25,72 +31,75 @@ const MagnifyingGlassDog = ({ navigation }) => {
         <Icon name="arrow-left" size={20} color="white" />
       </TouchableOpacity>
 
-      <TextInput
-        style={[styles.searchBar, styles.absolutePosition]}
-        placeholder="Ask a question.."
-        onChangeText={setSearchQuery}
-        value={searchQuery}
-      />
-
-      <View style={styles.searchIcon}>
-        <Icon name="search" size={20} color="#D14E86" />
+      <View style={styles.searchBar}>
+        <TouchableOpacity onPress={handleSearch}>
+          <Icon name="search" size={20} color="#D14E86" style={styles.searchIcon} />
+        </TouchableOpacity>
+        <TextInput
+          style={styles.textInputStyle}
+          placeholder="Ask a question.."
+          onChangeText={setSearchQuery}
+          value={searchQuery}
+          onSubmitEditing={handleSearch} // Call handleSearch when the user submits the input
+        />
       </View>
     </View>
   );
 };
 
+// ... StyleSheet and other component code remains the same ...
+
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center', 
+    alignItems: 'center', 
+    padding: 20, 
   },
   innerContainer: {
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
-    width: 200,
-    height: 200,
-    top: -100,
+    width: '60%', 
+    height: undefined,
+    aspectRatio: 1,
+    resizeMode: 'contain',
+    bottom: 50,
   },
   circle: {
     position: 'absolute',
-    top: 60,
-    left: 25,
+    top: '7%',
+    left: '5%',
     padding: 15,
-    borderRadius: 0,
+    borderRadius: 30,
     backgroundColor: '#D14E86',
-    alignSelf: 'flex-start',
   },
   profileIcon: {
     position: 'absolute',
-    top: 25,
-    right: 10,
-    backgroundColor: 'transparent',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginVertical: 20,
+    top: '8%',
+    right: '5%',
   },
   searchBar: {
-    width: 200,
-    height: 40,
+    width: '80%', 
+    flexDirection: 'row', 
+    alignItems: 'center', 
     borderColor: 'black',
     borderWidth: 1,
     borderRadius: 5,
-    padding: 10,
-    margin: 10,
-    alignSelf: 'center',
-    top: 420,
-  },
-  absolutePosition: {
-    position: 'absolute',
-    bottom: 50,
+    marginTop: 20,
+    bottom: 60,
   },
   searchIcon: {
-    right: -75,
-    top: -90,
+    padding: 10, 
   },
+
+  textInputStyle: {
+    flex: 1,
+    marginLeft: 10, 
+  }
 });
 
 export default MagnifyingGlassDog;
