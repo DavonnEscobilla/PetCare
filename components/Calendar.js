@@ -1,6 +1,7 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import React, { useState }  from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const PetProfile = ({ name, image, containerStyle, imageStyle, nameStyle }) => (
   <View style={[styles.petProfileContainer, containerStyle]}>
@@ -12,15 +13,46 @@ const PetProfile = ({ name, image, containerStyle, imageStyle, nameStyle }) => (
 );
 
 const App = () => {
+    const [selected, setSelected] = useState('');
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
+      <TouchableOpacity
+            style={styles.circle}
+            onPress={() => navigation.navigate('Home')}
+        >
+            <Icon name="arrow-left" size={20} color="white" />
+        </TouchableOpacity>
         <Text style={styles.headerText}>Calendar</Text>
-      </View>
-      <Calendar
-        // Specify any props for the calendar here.
-        style={styles.calendar}
-      />
+        </View>
+
+
+        <Calendar
+  onDayPress={day => {
+    setSelected(day.dateString);
+  }}
+  markedDates={{
+    [selected]: {
+      selected: true,
+      disableTouchEvent: true,
+      selectedColor: '#FFB4D4',
+      selectedTextColor: 'white',
+      selectedDotColor: '#FFB4D4' 
+    }
+  }}
+  theme={{
+    arrowColor: '#FFB4D4', 
+  
+  }}
+  style={{
+    borderRadius: 10,
+    elevation: 6,
+    margin: 40
+  }}
+/>
+
+      
+ 
       <View style={styles.petSection}>
         <PetProfile
           name="Primo"
@@ -38,13 +70,13 @@ const App = () => {
           nameStyle={styles.smudgeNameContainer}
         />
       </View>
-      {/* Icons for the tab bar go here */}
+      {}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  // ... other styles remain unchanged ...
+
   
   primoContainer: {
     flexDirection: 'row',
@@ -52,63 +84,63 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginVertical: 10,
     alignItems: 'center',
-    justifyContent: 'space-between', // Adjusted to position children on opposite sides
-    width: '90%', // Adjusted to be relative to screen width
+    justifyContent: 'space-between', 
+    width: '90%', 
     height: '27%',
-    alignSelf: 'center', // Center the container within its parent
+    alignSelf: 'center', 
   },
   smudgeContainer: {
     flexDirection: 'row',
     backgroundColor: '#FFB4D4',
     borderRadius: 20,
-    marginVertical: 30,
+    marginVertical: 20,
     alignItems: 'center',
-    justifyContent: 'space-between', // Adjusted to position children on opposite sides
-    width: '90%', // Adjusted to be relative to screen width
+    justifyContent: 'space-between', 
+    width: '90%', 
     height: '27%',
-    alignSelf: 'center', // Center the container within its parent
+    alignSelf: 'center', 
 
-  // ... petNameContainer, petName, petImage styles remain unchanged ...
+
   },
   petNameContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1, // Allows the name container to fill the space next to the image
+    flex: 1, 
   },
   primoNameContainer: {
-    // Removed the right property, use padding or margin if needed to adjust the text position
-    backgroundColor: 'transparent', // Use transparent to avoid overlapping colors
+   
+    backgroundColor: 'transparent', 
   },
   smudgeNameContainer: {
-    // Removed the right property, use padding or margin if needed to adjust the text position
+   
     backgroundColor: 'transparent',
   },
   petName: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 35, // Adjust font size according to the design
+    fontSize: 35, 
   },
-  primoImage: {
-    // Use flex properties or padding/margin to position the image instead of left and bottom
-     // Fixed height, or use percentage if you want it to be responsive
+  header: {
+    backgroundColor: '#D14E86',
+    height: 100,
+  },
+  headerText: {
+    color: 'white',
+    fontSize: 22,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    marginTop: 53,
+ },
+  circle: {
+    position: 'absolute',
+    top: 45,
+    left: 25,
+    padding: 15,
+    borderRadius: 0,
+    backgroundColor: '#D14E86',
+    alignSelf: 'flex-start',
+  },
 
- 
-  },
-  smudgeImage: {
 
-  
-  },
-  primoText: {
-    // The fontSize should be responsive; consider using a calculated value based on screen size or removing it if not needed
-  },
-  // tabBar style remains unchanged
-  calendar: {
-    // If you need to apply additional styles directly to the calendar's container view
-    // borderWidth and borderColor are just examples
-    borderWidth: 3,
-    borderColor: 'gray', // Pink border
-    
-    
-  },
 });
 export default App;

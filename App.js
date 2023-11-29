@@ -18,6 +18,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash">
+      
         <Stack.Screen name="HomeSplash" component={HomeSplash} options={{ headerShown: false }} />
         <Stack.Screen name="Intro" component={Intro} options={{ headerShown: false }}/>
         <Stack.Screen name="Login" component={Auth} options={{ headerShown: false }}/>
