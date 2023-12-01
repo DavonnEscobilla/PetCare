@@ -1,24 +1,33 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+// firebase.js
+import { initializeApp, getApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getDatabase } from 'firebase/database';
 import { getReactNativePersistence } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDQ3wb5Zhk5sCdied7IChk3Q5y-R5SXLY4", //Use your api key
-  authDomain: "fir-auth-740be.firebaseapp.com", //Use your api key
-  projectId: "fir-auth-740be", //Use your api key
-  storageBucket: "fir-auth-740be.appspot.com", //Use your api key
-  messagingSenderId: "187299185086", //Use your api key
-  appId: "1:187299185086:web:660ac03c34cc2f9824b9ef", //Use your api key
-  measurementId: "G-PBBWZJ26CK" //Use your api key
+  apiKey: "AIzaSyDQ3wb5Zhk5sCdied7IChk3Q5y-R5SXLY4",
+  authDomain: "fir-auth-740be.firebaseapp.com", 
+  projectId: "fir-auth-740be", 
+  storageBucket: "fir-auth-740be.appspot.com", 
+  messagingSenderId: "187299185086", 
+  appId: "1:187299185086:web:660ac03c34cc2f9824b9ef", 
+  measurementId: "G-PBBWZJ26CK",
+  databaseURL: "https://fir-auth-740be-default-rtdb.asia-southeast1.firebasedatabase.app"
 };  
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+let app;
 
-// Initialize Firebase Auth with AsyncStorage
+try {
+  app = getApp();
+} catch (error) {
+  app = initializeApp(firebaseConfig);
+}
+
 const auth = getAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
 
-export { app, auth };
+const database = getDatabase(app);
+
+export { app, auth, database };

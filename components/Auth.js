@@ -1,8 +1,9 @@
 // Auth.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { auth } from '../firebase';
+import { auth, database } from '../firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { ref, set } from 'firebase/database';
 
 const Auth = ({ route, navigation }) => {
   const [email, setEmail] = useState('');
@@ -17,7 +18,9 @@ const Auth = ({ route, navigation }) => {
         console.log('Logged in successfully');
       } else {
         if (password === confirmPassword) {
-          await createUserWithEmailAndPassword(auth, email, password);
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const uid = userCredential.user.uid;
+          await set(ref(database, `users/${uid}`), { email });
           console.log('Signed up successfully');
         } else {
           console.log('Passwords do not match');
@@ -27,6 +30,9 @@ const Auth = ({ route, navigation }) => {
       navigation.navigate('Splash2');
     } catch (error) {
       console.error('Authentication error:', error.message);
+      if (error.code) {
+        console.error('Error code:', error.code);
+      }
     }
   };
 
