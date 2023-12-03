@@ -41,28 +41,46 @@ const PetsComponent = () => {
     }
 
     // Select image
-    const result = await ImagePicker.launchImageLibraryAsync();
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    
     if (!result.cancelled) {
-      // If it's not cancelled, update the pet's image
       updatePetImage(petId, result.uri);
+    } else {
+      console.error('Image picker was cancelled or failed to return an image.');
     }
   };
 
   // Function to update pet image in Firebase
   const updatePetImage = async (petId, uri) => {
+    if (uri === undefined) {
+      console.error('Error: URI is undefined.');
+      Alert.alert('Error', 'Cannot update pet image with undefined URI.');
+      return;
+    }
+  
     const petRef = ref(database, `users/${auth.currentUser.uid}/pets/${petId}`);
-    await update(petRef, {
-      image: uri,
-    });
-    // Update local state
-    setPets((currentPets) =>
-      currentPets.map((pet) => {
-        if (pet.id === petId) {
-          return { ...pet, image: uri };
-        }
-        return pet;
-      })
-    );
+    try {
+      await update(petRef, {
+        image: uri,
+      });
+      // Update local state
+      setPets((currentPets) =>
+        currentPets.map((pet) => {
+          if (pet.id === petId) {
+            return { ...pet, image: uri };
+          }
+          return pet;
+        })
+      );
+    } catch (error) {
+      console.error('Error updating pet image', error);
+      Alert.alert('Error', 'Failed to update pet image.');
+    }
   };
   
 
