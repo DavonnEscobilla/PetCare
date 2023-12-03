@@ -1,9 +1,14 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image} from 'react-native';
+import PetProfile  from './PetProfile';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import PetProfiles from './homeComponents/petProfiles';
+import * as ImagePicker from 'expo-image-picker';
 
 const UserProfile = ({ navigation }) => {
+  // Add these state hooks
+  const [file, setFile] = useState(null); 
+  const [error, setError] = useState(null);
+
   const handleSignOut = () => {
     console.log('Signing out...');
   };
@@ -12,8 +17,25 @@ const UserProfile = ({ navigation }) => {
     console.log('Add a new pet profile...');
   };
 
-  const uploadedImage = require('../assets/defaultProfile.png'); // Replace with actual image URI
-  const userName = 'Jane Emerson'; // Replace with the user's name
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', `Sorry, we need camera roll permissions to upload images.`);
+      return;
+    }
+  
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true, // If you want to allow editing
+      aspect: [4, 3], // Aspect ratio
+      quality: 1, // Keep the quality high
+    });
+  
+    if (!result.cancelled) {
+      // Setting the image URI
+      setFile(result.assets[0].uri);
+    }
+  };
 
 return (
     <View style={styles.homeContainer}>
@@ -32,16 +54,18 @@ return (
       <View style={styles.userProfileContainer}>
         <TouchableOpacity
           style={styles.userPhotoContainer}
-          onPress={() => console.log('Upload photo')} // Action to upload photo
+          onPress={pickImage}
         >
-          {/* Display uploaded image or default image */}
-          <Image source={uploadedImage} style={styles.userPhoto} />
-          {/* Icon for uploading photo */}
+          <Image 
+            source={file ? { uri: file } : require('../assets/defaultProfile.png')} 
+            style={styles.userPhoto}
+          />
           <Icon name="camera" size={24} color="gray" style={styles.cameraIcon} />
         </TouchableOpacity>
+        
 
         {/* User's name */}
-        <Text style={styles.userName}>{userName}</Text> 
+        <Text style={styles.userName}>{'Jane Emerson'}</Text>
 
         <TouchableOpacity
           style={styles.logoutButton}
@@ -60,6 +84,7 @@ return (
           <Icon name="plus-circle" size={30} color="black" />
         </TouchableOpacity>
       </View>
+      <PetProfile />
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -127,6 +152,7 @@ const styles = StyleSheet.create({
   petProfileContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 20,
   },
   logoutText: {
     fontSize: 14,
