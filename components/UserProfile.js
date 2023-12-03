@@ -37,18 +37,27 @@ const UserProfile = ({ navigation }) => {
   const [file, setFile] = useState(null);
 
   useEffect(() => {
-    if (auth.currentUser) {
-      const userId = auth.currentUser.uid;
-      const userRef = ref(database, "users/" + userId);
-      onValue(userRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          setUserName(data.username);
-          setProfilePic(data.profilePicture);
-        }
-      });
+    if (!auth.currentUser) {
+      console.error('No user logged in');
+      return;
     }
-  }, []);
+  
+    const userId = auth.currentUser.uid;
+    const userPetsRef = ref(database, `users/${userId}/pets`);
+  
+    const unsubscribe = onValue(userPetsRef, (snapshot) => {
+      const data = snapshot.val();
+      const petsArray = data ? Object.keys(data).map(key => ({
+        id: key,
+        ...data[key],
+      })) : [];
+      setPets(petsArray);
+    }, (error) => {
+      console.error(error);
+    });
+  
+    return () => off(userPetsRef);
+  }, []);  
 
   const handleSignOut = () => {
     signOut(auth)

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { database } from '../firebase';
+import {auth, database } from '../firebase';
 import { ref, push, update, get } from 'firebase/database';
 
 
@@ -14,23 +14,29 @@ const PetInput = ({ navigation }) => {
   const [breed, setBreed] = useState('');
 
   const savePetData = async () => {
+    if (!auth.currentUser) {
+      console.error('No user logged in');
+      Alert.alert('Error', 'No user logged in.');
+      return;
+    }
+  
     try {
+      const userId = auth.currentUser.uid; // Get the current user's UID
       const petProfile = { name, age, dob, weight, breed };
-
-      // Save the pet data to Firebase Realtime Database
-      const newPetRef = push(ref(database, 'pets'));
+  
+      // Save the pet data under the user's UID in Firebase Realtime Database
+      const newPetRef = push(ref(database, `users/${userId}/pets`));
       await update(newPetRef, petProfile);
-
+  
       console.log('Pet profile saved with ID: ', newPetRef.key);
-
-      // Navigate back to the pets list screen
-      navigation.goBack(); // Ensure that this navigates back to PetsComponent
+      navigation.goBack();
     } catch (error) {
       console.error('Error saving pet data', error);
+      Alert.alert('Error', 'Failed to save pet data.');
     }
   };
   
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Create pet account</Text>
