@@ -17,9 +17,31 @@ const MedicalHomeScreen = ({ navigation }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <AntDesign name="arrowleft" size={24} color="black" />
+          <AntDesign name="arrowleft" size={24} color="white" />
         </TouchableHighlight>
-        <Text style={styles.headerTitle}>Medical Records</Text>
+        <Text style={styles.headerTitle}>Pet Health</Text>
+      </View>
+      
+      <View style={styles.petContainer}>
+        <Text style={styles.petTitle}>My Pets</Text>
+        <View style={styles.petImagesContainer}>
+          {/* Images of pets */}
+        </View>
+      </View>
+
+
+      <View style={styles.vaccineContainer}>
+        <Text style={styles.vaccineTitle}>Vaccinations</Text>
+        <View style={styles.vaccineInfoContainer}>
+          {/* Images of pets */}
+        </View>
+      </View>
+
+      <View style={styles.groomingContainer}>
+        <Text style={styles.groomingTitle}>Grooming</Text>
+        <View style={styles.groomingInfoContainer}>
+          {/* Images of pets */}
+        </View>
       </View>
 
       {/* Content */}
@@ -32,23 +54,7 @@ const MedicalHomeScreen = ({ navigation }) => {
       >
         <Text style={styles.buttonText}>Add Record</Text>
       </TouchableHighlight>
-      
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
-          <Icon name="home" size={30} color="black" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('MagnifyingGlassDog')}
-        >
-          <Icon name="search" size={30} color="black" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Calendar')}>
-          <Icon name="calendar" size={30} color="black" />
-        </TouchableOpacity>
-      </View>
+    
 
     </View>
 
@@ -67,13 +73,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingLeft: 0.6, // Adjust this to your liking for left padding
+    
   },
   backButton: {
-    position: 'absolute',
-    left: 30, // Adjust this value to control the distance from the right edge
-    marginTop: 30, // Increase this value to move the back button further down
-  },
-  
+      position: 'absolute',
+      top: 35,
+      left: 25,
+      padding: 15,
+      borderRadius: 0,
+      backgroundColor: '#D14E86',
+      alignSelf: 'flex-start',
+    },
   headerTitle: {
     color: 'white',
     fontSize: 22,
@@ -81,17 +91,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 30,
   },
-  
   addButton: {
-    backgroundColor: 'pink',
-    borderWidth: 3,
-    borderColor: '#ff08bd',
+    backgroundColor: '#D14E86',
     padding: 10,
     margin: 20,
     borderRadius: 10,
   },
   buttonText: {
-    color: 'black',
+    color: 'white',
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
@@ -107,6 +114,75 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     // Add other styling properties for the buttons if needed
+  },
+  petContainer: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    height: 150,
+    width: '90%',
+    alignSelf: 'center',
+    marginTop: 20,
+    shadowColor: '#000', // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset for x and y
+    shadowOpacity: 0.3, // Shadow opacity
+    shadowRadius: 5, // Shadow blur radius
+    elevation: 1, // Use elevation for Android
+  },
+  
+  petTitle: {
+    color: 'black',
+    textAlign: 'left',
+    fontSize: 16,
+    fontWeight: 'bold',
+    justifyContent: 'flex-start',
+    marginLeft: 20,
+    marginTop: 10,
+    
+  },
+  vaccineContainer: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    height: 150,
+    width: '90%',
+    alignSelf: 'center',
+    marginTop: 20,
+    shadowColor: '#000', // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset for x and y
+    shadowOpacity: 0.3, // Shadow opacity
+    shadowRadius: 5, // Shadow blur radius
+    elevation: 1, // Use elevation for Android
+  },
+
+  vaccineTitle: {
+    color: 'black',
+    textAlign: 'left',
+    fontSize: 16,
+    fontWeight: 'bold',
+    justifyContent: 'flex-start',
+    marginLeft: 20,
+    marginTop: 10,
+  },
+  groomingContainer: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    height: 150,
+    width: '90%',
+    alignSelf: 'center',
+    marginTop: 20,
+    shadowColor: '#000', // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset for x and y
+    shadowOpacity: 0.3, // Shadow opacity
+    shadowRadius: 5, // Shadow blur radius
+    elevation: 1, // Use elevation for Android
+  },
+  groomingTitle: {
+    color: 'black',
+    textAlign: 'left',
+    fontSize: 16,
+    fontWeight: 'bold',
+    justifyContent: 'flex-start',
+    marginLeft: 20,
+    marginTop: 10,
   },
 });
 

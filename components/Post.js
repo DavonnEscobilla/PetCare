@@ -8,7 +8,7 @@ import {
   Image,
   Keyboard,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
+import * as ImagePicker from 'expo-image-picker';
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const Post = ({ navigation, route }) => {
