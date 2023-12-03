@@ -1,42 +1,60 @@
 //Pet Profile
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { auth, database } from '../firebase';
-import { ref, onValue, off, remove, update } from 'firebase/database'; // Ensure the update method is imported
-import Icon from 'react-native-vector-icons/FontAwesome';
-import * as ImagePicker from 'expo-image-picker';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { auth, database } from "../firebase";
+import { ref, onValue, off, remove, update } from "firebase/database"; // Ensure the update method is imported
+import Icon from "react-native-vector-icons/FontAwesome";
+import * as ImagePicker from "expo-image-picker";
 
 const PetsComponent = () => {
   const [pets, setPets] = useState([]);
 
   useEffect(() => {
     if (!auth.currentUser) {
-      console.error('No user logged in');
+      console.error("No user logged in");
       return;
     }
-  
+
     const userId = auth.currentUser.uid;
     const userPetsRef = ref(database, `users/${userId}/pets`);
-  
-    const unsubscribe = onValue(userPetsRef, (snapshot) => {
-      const data = snapshot.val();
-      const petsArray = data ? Object.keys(data).map(key => ({
-        id: key,
-        ...data[key],
-      })) : [];
-      setPets(petsArray);
-    }, (error) => {
-      console.error(error);
-    });
-  
+
+    const unsubscribe = onValue(
+      userPetsRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        const petsArray = data
+          ? Object.keys(data).map((key) => ({
+              id: key,
+              ...data[key],
+            }))
+          : [];
+        setPets(petsArray);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+
     return () => off(userPetsRef);
   }, []);
 
   const pickImage = async (petId) => {
     // Ask for permission
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissionResult.granted === false) {
-      alert("You've refused to allow this app to access your photos!");
+      Alert.alert(
+        "Permission Required",
+        "You've refused to allow this app to access your photos!"
+      );
       return;
     }
 
@@ -47,22 +65,31 @@ const PetsComponent = () => {
       aspect: [4, 3],
       quality: 1,
     });
-    
-    if (!result.cancelled) {
-      updatePetImage(petId, result.uri);
+
+    // Check if the image picker was not cancelled
+    if (!result.cancelled && result.assets) {
+      // Make sure we have the array and it's not empty
+      const uri = result.assets[0].uri;
+      if (uri) {
+        updatePetImage(petId, uri);
+      } else {
+        console.error("URI is undefined.");
+        Alert.alert("Error", "The image URI is undefined.");
+      }
     } else {
-      console.error('Image picker was cancelled or failed to return an image.');
+      console.error("Image picker was cancelled or failed to return an image.");
     }
   };
 
-  // Function to update pet image in Firebase
   const updatePetImage = async (petId, uri) => {
+    console.log(uri); // Add this line to inspect the URI
+
     if (uri === undefined) {
-      console.error('Error: URI is undefined.');
-      Alert.alert('Error', 'Cannot update pet image with undefined URI.');
+      console.error("Error: URI is undefined.");
+      Alert.alert("Error", "Cannot update pet image with undefined URI.");
       return;
     }
-  
+
     const petRef = ref(database, `users/${auth.currentUser.uid}/pets/${petId}`);
     try {
       await update(petRef, {
@@ -78,17 +105,20 @@ const PetsComponent = () => {
         })
       );
     } catch (error) {
-      console.error('Error updating pet image', error);
-      Alert.alert('Error', 'Failed to update pet image.');
+      console.error("Error updating pet image", error);
+      Alert.alert("Error", "Failed to update pet image.");
     }
   };
-  
 
   const renderItem = ({ item }) => (
     <View style={styles.petCard}>
       <TouchableOpacity onPress={() => pickImage(item.id)}>
         <Image
-          source={{ uri: item.image || 'default_pet_image_placeholder' }}
+          source={
+            item.image
+              ? { uri: item.image }
+              : require("../assets/defaultpetprofile.png")
+          }
           style={styles.petImage}
         />
       </TouchableOpacity>
@@ -102,25 +132,24 @@ const PetsComponent = () => {
         <Icon name="trash" size={24} color="red" />
       </TouchableOpacity>
     </View>
-    
-  );  
+  );
 
   const deletePetProfile = async (petId) => {
     if (!auth.currentUser) {
-      console.error('No user logged in');
+      console.error("No user logged in");
       return;
     }
-  
+
     try {
       const userId = auth.currentUser.uid;
       const petRef = ref(database, `users/${userId}/pets/${petId}`);
       await remove(petRef);
-      console.log('Pet profile deleted:', petId);
+      console.log("Pet profile deleted:", petId);
     } catch (error) {
-      console.error('Error deleting pet data', error);
-      Alert.alert('Error', 'Failed to delete pet data.');
+      console.error("Error deleting pet data", error);
+      Alert.alert("Error", "Failed to delete pet data.");
     }
-  };  
+  };
 
   return (
     <View style={styles.container}>
@@ -128,10 +157,9 @@ const PetsComponent = () => {
       <FlatList
         data={pets}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
       />
     </View>
-
   );
 };
 
@@ -143,16 +171,16 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
   },
   petCard: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 12,
-    alignItems: 'center',
-    backgroundColor: '#f9f9f9',
+    alignItems: "center",
+    backgroundColor: "#f9f9f9",
     borderRadius: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -165,22 +193,22 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     marginRight: 12,
     borderWidth: 2, // Set the border width
-    borderColor: 'black', // Change this to your desired color
+    borderColor: "black", // Change this to your desired color
   },
   petInfo: {
     flex: 1,
   },
   petName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   petBreed: {
     fontSize: 14,
-    color: 'gray',
+    color: "gray",
   },
   petAge: {
     fontSize: 14,
-    color: 'gray',
+    color: "gray",
   },
 });
 
