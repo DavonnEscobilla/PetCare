@@ -12,8 +12,15 @@ import PetProfiles from "./homeComponents/HomePetProfile";
 
 const Home = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
+
   const handleAddPost = (post) => {
     setPosts((currentPosts) => [post, ...currentPosts]);
+  };
+
+  const handleDeletePost = (indexToDelete) => {
+    setPosts((currentPosts) =>
+      currentPosts.filter((_, index) => index !== indexToDelete)
+    );
   };
 
   return (
@@ -54,10 +61,16 @@ const Home = ({ navigation }) => {
                 <Text style={styles.postTime}>12/03/2023</Text>
               </View>
               <Text>{post.content}</Text>
-              <Image
-                source={require("../assets/post1.jpg")}
-                style={styles.postImage}
-              />
+              {post.image && (
+                <Image source={{ uri: post.image }} style={styles.postImage} />
+              )}
+              {/* Delete Button */}
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => handleDeletePost(index)}
+              >
+                <Text style={styles.deleteButtonText}>Delete</Text>
+              </TouchableOpacity>
             </View>
           ))}
         </ScrollView>
@@ -145,13 +158,22 @@ const styles = StyleSheet.create({
   scrollViewFeed: {
     paddingHorizontal: 15,
   },
-  postHeaderContainer: {
-  },
+  postHeaderContainer: {},
   postHeader: {
     fontSize: 20,
   },
   postTimeContainer: {
     marginBottom: 10,
+  },
+  deleteButton: {
+    marginTop: 10,
+    alignSelf: 'flex-end',
+    backgroundColor: '#FFA8CD', // Example color, adjust as needed
+    padding: 8,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: 'white',
   },
   postImage: {
     width: 338,
