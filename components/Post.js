@@ -157,13 +157,12 @@ const styles = StyleSheet.create({
   },
   input: {
     minHeight: 100,
-    // borderColor: 'white',
+    // borderColor: 'black',
     // borderWidth: 1,
     padding: 10,
     fontSize: 18,
     borderRadius: 10,
     // backgroundColor: 'white',
-    marginBottom: 10,
   },
   photoSelectionContainer: {
     flexDirection: "row",

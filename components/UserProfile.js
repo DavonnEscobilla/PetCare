@@ -13,7 +13,9 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
 import { auth, database } from "../firebase";
 import { ref, set, onValue } from "firebase/database";
+import { off } from "firebase/database";
 import { signOut } from "firebase/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const saveUserData = async (newUserName, profilePicUrl) => {
   if (auth.currentUser) {
@@ -35,29 +37,50 @@ const UserProfile = ({ navigation }) => {
   const [userName, setUserName] = useState("Default Name");
   const [profilePic, setProfilePic] = useState(null);
   const [file, setFile] = useState(null);
+  const [pets, setPets] = useState([]);
 
   useEffect(() => {
+    loadUserName();
     if (!auth.currentUser) {
-      console.error('No user logged in');
+      console.error("No user logged in");
       return;
     }
-  
+
     const userId = auth.currentUser.uid;
     const userPetsRef = ref(database, `users/${userId}/pets`);
-  
-    const unsubscribe = onValue(userPetsRef, (snapshot) => {
-      const data = snapshot.val();
-      const petsArray = data ? Object.keys(data).map(key => ({
-        id: key,
-        ...data[key],
-      })) : [];
-      setPets(petsArray);
-    }, (error) => {
-      console.error(error);
-    });
-  
+
+    const unsubscribe = onValue(
+      userPetsRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        const petsArray = data
+          ? Object.keys(data).map((key) => ({
+              id: key,
+              ...data[key],
+            }))
+          : [];
+        setPets(petsArray);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+
     return () => off(userPetsRef);
-  }, []);  
+  }, []);
+
+  const loadProfilePic = async () => {
+    try {
+      const storedProfilePic = await AsyncStorage.getItem('@profilePic');
+      if (storedProfilePic !== null) {
+        setProfilePic(storedProfilePic);
+      }
+    } catch (error) {
+      console.error('Error loading profile picture: ', error);
+    }
+  };
+
+  loadProfilePic();
 
   const handleSignOut = () => {
     signOut(auth)
@@ -73,35 +96,78 @@ const UserProfile = ({ navigation }) => {
       });
   };
 
-  const handleAddProfile = () => {
-    console.log("Add a new pet profile...");
-  };
-
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-        Alert.alert(
-            "Permission Denied",
-            `Sorry, we need camera roll permissions to upload images.`
-        );
-        return; // Early return if permission is not granted
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permission Denied',
+        'Sorry, we need camera roll permissions to upload images.'
+      );
+      return; // Early return if permission is not granted
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true, // If you want to allow editing
-        aspect: [4, 3], // Aspect ratio
-        quality: 1, // Keep the quality high
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true, // If you want to allow editing
+      aspect: [4, 3], // Aspect ratio
+      quality: 1, // Keep the quality high
     });
 
     if (!result.cancelled) {
-        setFile(result.assets[0].uri);
-        // Save user data to Firebase
-        saveUserData(userName, result.assets[0].uri); // Pass the current userName
+      // Update the file state and wait for the update before saving the user data
+      setFile(result.assets[0].uri);
+      await handleEndEditing(userName, result.assets[0].uri);
     }
-};
+  };
 
+  // Load the username from AsyncStorage
+  const loadUserName = async () => {
+    try {
+      const name = await AsyncStorage.getItem("@username");
+      if (name !== null) {
+        setUserName(name);
+      }
+    } catch (error) {
+      console.error("Error loading username: ", error);
+    }
+  };
 
+  // Save the username to AsyncStorage
+  const saveUserName = async (name) => {
+    try {
+      await AsyncStorage.setItem("@username", name);
+      setUserName(name); // Update the state to reflect the new username
+    } catch (error) {
+      console.error("Error saving username: ", error);
+    }
+  };
+
+  const handleEndEditing = async (name, uri) => {
+    try {
+      const userId = auth.currentUser ? auth.currentUser.uid : null;
+      if (userId) {
+        // Save to Firebase
+        await set(ref(database, 'users/' + userId), {
+          username: name,
+          profilePicture: uri || profilePic,
+        });
+  
+        // Update the local state with the new username and profile picture
+        setUserName(name);
+        setProfilePic(uri);
+  
+        // Save to AsyncStorage
+        await AsyncStorage.setItem('@username', name);
+        if (uri) {
+          await AsyncStorage.setItem('@profilePic', uri);
+        }
+      }
+    } catch (error) {
+      console.error('Error saving user data: ', error);
+      Alert.alert('Error', 'Failed to save user data.');
+    }
+  };
+  
   return (
     <View style={styles.homeContainer}>
       {/* Header Container */}
@@ -138,7 +204,7 @@ const UserProfile = ({ navigation }) => {
           style={styles.userNameInput}
           value={userName}
           onChangeText={setUserName}
-          onEndEditing={() => saveUserData(userName, profilePic || "")}
+          onEndEditing={() => handleEndEditing(userName, profilePic || "")}
         />
 
         <TouchableOpacity
@@ -157,6 +223,8 @@ const UserProfile = ({ navigation }) => {
         >
           <Icon name="plus-circle" size={30} color="black" />
         </TouchableOpacity>
+        {/* Pass the pets array to the PetProfile component */}
+        <PetProfile pets={pets} />
       </View>
       <PetProfile />
 

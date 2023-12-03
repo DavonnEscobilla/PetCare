@@ -79,7 +79,7 @@ const PetsComponent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 20,
+    marginTop: 5,
     marginHorizontal: 20,
   },
   title: {

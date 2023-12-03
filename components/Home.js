@@ -139,11 +139,14 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     fontWeight: "bold",
   },
-  scrollViewPet: {},
+  scrollViewPet: {
+    paddingBottom: 5,
+  },
   scrollViewFeed: {
     paddingHorizontal: 15,
   },
-  postHeaderContainer: {},
+  postHeaderContainer: {
+  },
   postHeader: {
     fontSize: 20,
   },
@@ -164,19 +167,21 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   postIcon: {
-    backgroundColor: "transparent",
+    backgroundColor: "white",
     position: "absolute",
     bottom: 110,
     right: 25,
     borderRadius: 20,
-    shadowColor: "gray",
+    // Shadow properties for iOS
+    shadowColor: "black",
     shadowOffset: {
-      width: 5,
-      height: 5,
+      width: 0,
+      height: 2,
     },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 0.1,
+    // Elevation for Android - adjust this value as needed
+    elevation: 5, // Try increasing this for a more pronounced shadow on Android
   },
   buttonContainer: {
     position: "absolute",
