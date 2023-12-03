@@ -15,6 +15,10 @@ import RecordListScreen from './RecordListScreen';
 
 
 const MedicalHomeScreen = ({ navigation }) => {
+  const navigateToScreen = (screenName, params) => {
+    navigation.navigate(screenName, params);
+  };
+  
   const [pets, setPets] = useState([]);
 
   useEffect(() => {

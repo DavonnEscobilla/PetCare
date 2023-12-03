@@ -1,63 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useMedicalRecords } from '../components/MedicalRecordContext';
 
 const RecordListScreen = () => {
   const [expandedRecords, setExpandedRecords] = useState([]);
-  const { records} = useMedicalRecords();
- 
-  const toggleExpansion = (recordNumber) => {
-    setExpandedRecords((prevExpanded) =>
-      prevExpanded.includes(recordNumber)
-        ? prevExpanded.filter((record) => record !== recordNumber)
-        : [...prevExpanded, recordNumber]
-    );
-  };
+  const { records } = useMedicalRecords();
 
-  const renderRecordSection = (recordNumber, petName, age, recordDate, treatment, doctorAssigned ) => {
+  const fetchMedicalRecords = async () => {
+    const response = await fetch('data.json');
+    const data = await response.json();
+    setRecords(data);
+  };
+  
+  useEffect(() => {
+    fetchMedicalRecords();
+  }, []);
+
+  const renderRecordSection = (record, recordNumber) => {
     return (
       <View style={styles.petRecord} key={recordNumber}>
-        <TouchableOpacity onPress={() => toggleExpansion(recordNumber)}>
-          <Text style={styles.recordTitle}>{petName}</Text>
-        </TouchableOpacity>
-
-        {expandedRecords.includes(recordNumber) && (
-          <View style={styles.recordSection}>
+        <View style={styles.recordSection}>
+          {record.recordType === 'Vaccination' && (
+            <View style={styles.vaccineBox}>
+            <Text style={styles.recordSubtitle}>Vaccination Record</Text>
             <View style={styles.recordBox}>
-              <Text style={styles.recordSubtitle}>Vaccination Record</Text>
               <View style={styles.recordInfo}>
-                <Text>Age: {age}</Text>
-                <Text>Date: {recordDate}</Text>
-                <Text>Doctor Assigned: {doctorAssigned}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{record.petName}</Text>
+                <Text>Date: {record.recordDate}</Text>
+                <Text>Doctor Assigned: {record.doctorAssigned}</Text>
               </View>
-        
             </View>
+            </View>
+          )}
 
-            <View style={styles.recordBox}>
+          {record.recordType === 'Treatment' && (
+            <View style={styles.treatmentBox}>
               <Text style={styles.recordSubtitle}>Treatment Record</Text>
+              <View style={styles.recordBox}>
               <View style={styles.recordInfo}>
-                <Text>Treatment: {treatment}</Text>
-                <Text>Date:{recordDate}</Text>
-                <Text>Doctor Assigned: {doctorAssigned}</Text>
+                <Text style={{ fontWeight: 'bold' }}>{record.petName}</Text>
+                <Text>{record.recordDate}</Text>
+                <Text>{record.doctorAssigned}</Text>
               </View>
-             
             </View>
-          </View>
-        )}
+            </View>
+          )}
+        </View>
       </View>
+      
     );
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {records.map((record, index) =>
-        renderRecordSection(
-          index,
-          record.petName,
-          record.age,
-          record.recordDate,
-          record.doctorAssigned
-        )
+        renderRecordSection(record, index)
       )}
     </ScrollView>
   );
@@ -68,12 +65,20 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   petRecord: {
-    borderWidth: 3,
-    borderColor: 'pink',
-    padding: 10,
-    margin: 20,
-    borderRadius: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    height: '35%',
+    width: '90%',
+    alignSelf: 'center',
+    marginTop: 20,
+    shadowColor: '#000', // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset for x and y
+    shadowOpacity: 0.3, // Shadow opacity
+    shadowRadius: 5, // Shadow blur radius
+    elevation: 1, // Use elevation for Android
+    color: 'black',
   },
+  
   recordTitle: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -83,15 +88,41 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   recordBox: {
-    marginBottom: 20,
+    marginTop: 15,
+    alignSelf: 'flex-start',
+    marginLeft: 20,
+    borderWidth: 1,
+    borderRadius: 20,
+    height: '60%',
+    width: '50%',
+    shadowColor: '#000', // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset for x and y
+    shadowOpacity: 0.3, // Shadow opacity
+    shadowRadius: 5, // Shadow blur radius
+
+  },
+  vaccineTitle: {
+    color: 'black',
+    textAlign: 'left',
+    fontSize: 16,
+    fontWeight: 'bold',
+    justifyContent: 'flex-start',
+    marginLeft: 20,
+    marginTop: 10,
   },
   recordSubtitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginTop: 15,
+    alignSelf: 'flex-start',
+    marginLeft: 20,
   },
   recordInfo: {
     marginBottom: 10,
+    color: 'black',
+    marginLeft: 20,
+    marginTop: 10,
+
   },
   buttonContainer: {
     marginTop: 20,
