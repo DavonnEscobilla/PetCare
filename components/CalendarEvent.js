@@ -3,8 +3,10 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from '
 import { Calendar } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useNavigation } from '@react-navigation/native';
 
 const App = () => {
+  const navigation = useNavigation();
   const [selected, setSelected] = useState('');
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
   const [selectedTime, setSelectedTime] = useState(new Date());
@@ -26,12 +28,15 @@ const App = () => {
     setTimePickerVisible(Platform.OS === 'ios'); // Hide picker after selection on Android
   };
 
+  
+
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.circle}
-          onPress={() => {/* navigation.navigate('Home') */}}
+          onPress={() => navigation.navigate('Home')} 
         >
           <Icon name="arrow-left" size={20} color="white" />
         </TouchableOpacity>
