@@ -1,9 +1,10 @@
 //Pet Profile
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { auth, database } from '../firebase';
-import { ref, onValue, off, remove } from 'firebase/database'; // Ensure the off method is imported
+import { ref, onValue, off, remove, update } from 'firebase/database'; // Ensure the update method is imported
 import Icon from 'react-native-vector-icons/FontAwesome';
+import * as ImagePicker from 'expo-image-picker';
 
 const PetsComponent = () => {
   const [pets, setPets] = useState([]);
@@ -30,20 +31,60 @@ const PetsComponent = () => {
   
     return () => off(userPetsRef);
   }, []);
+
+  const pickImage = async (petId) => {
+    // Ask for permission
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissionResult.granted === false) {
+      alert("You've refused to allow this app to access your photos!");
+      return;
+    }
+
+    // Select image
+    const result = await ImagePicker.launchImageLibraryAsync();
+    if (!result.cancelled) {
+      // If it's not cancelled, update the pet's image
+      updatePetImage(petId, result.uri);
+    }
+  };
+
+  // Function to update pet image in Firebase
+  const updatePetImage = async (petId, uri) => {
+    const petRef = ref(database, `users/${auth.currentUser.uid}/pets/${petId}`);
+    await update(petRef, {
+      image: uri,
+    });
+    // Update local state
+    setPets((currentPets) =>
+      currentPets.map((pet) => {
+        if (pet.id === petId) {
+          return { ...pet, image: uri };
+        }
+        return pet;
+      })
+    );
+  };
   
 
   const renderItem = ({ item }) => (
     <View style={styles.petCard}>
-      <Image source={{ uri: item.image }} style={styles.petImage} />
+      <TouchableOpacity onPress={() => pickImage(item.id)}>
+        <Image
+          source={{ uri: item.image || 'default_pet_image_placeholder' }}
+          style={styles.petImage}
+        />
+      </TouchableOpacity>
       <View style={styles.petInfo}>
         <Text style={styles.petName}>{item.name}</Text>
         <Text style={styles.petBreed}>Breed: {item.breed}</Text>
         <Text style={styles.petAge}>Age: {item.age}</Text>
+        <Text style={styles.petDob}>Birthday: {item.dob}</Text>
       </View>
       <TouchableOpacity onPress={() => deletePetProfile(item.id)}>
         <Icon name="trash" size={24} color="red" />
       </TouchableOpacity>
     </View>
+    
   );  
 
   const deletePetProfile = async (petId) => {
@@ -105,6 +146,8 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 35,
     marginRight: 12,
+    borderWidth: 2, // Set the border width
+    borderColor: 'black', // Change this to your desired color
   },
   petInfo: {
     flex: 1,
