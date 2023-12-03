@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { database } from '../firebase';
+import { ref, push, update, get } from 'firebase/database';
+
 
 const PetInput = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -10,12 +13,23 @@ const PetInput = ({ navigation }) => {
   const [weight, setWeight] = useState('');
   const [breed, setBreed] = useState('');
 
-  const savePetData = () => {
-    // Logic to save pet data
+  const savePetData = async () => {
+    try {
+      const petProfile = { name, age, dob, weight, breed };
 
-    // Navigate to SavePetProfile screen and pass the pet profile as a parameter
-    navigation.navigate('SavePetProfile', { petProfile: { name, age, dob } });
+      // Save the pet data to Firebase Realtime Database
+      const newPetRef = push(ref(database, 'pets'));
+      await update(newPetRef, petProfile);
+
+      console.log('Pet profile saved with ID: ', newPetRef.key);
+
+      // Navigate back to the pets list screen
+      navigation.goBack(); // Ensure that this navigates back to PetsComponent
+    } catch (error) {
+      console.error('Error saving pet data', error);
+    }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -65,8 +79,7 @@ const PetInput = ({ navigation }) => {
         value={breed}
         onChangeText={(text) => setBreed(text)}
       />
-
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity style={styles.button} onPress={savePetData}>
         <Text style={styles.buttonText}>Save Pet Data</Text>
       </TouchableOpacity>
     </View>

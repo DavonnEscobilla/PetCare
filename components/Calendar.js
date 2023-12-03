@@ -12,7 +12,7 @@ const PetProfile = ({ name, image, containerStyle, imageStyle, nameStyle }) => (
   </View>
 );
 
-const App = () => {
+const App = ({ navigation }) => {
     const [selected, setSelected] = useState('');
   return (
     <ScrollView style={styles.container}>

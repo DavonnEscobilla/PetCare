@@ -12,10 +12,14 @@ import MagnifyingGlassDog from './components/MagnifyingGlassDog';
 import UserProfile from './components/UserProfile';
 import Post from './components/Post';
 import Calendar from './components/Calendar';
+<<<<<<< HEAD
 import MedicalHomeScreen from './components/MedicalHomeScreen';
 import RecordListScreen from './components/RecordListScreen';
 import AddRecordScreen from './components/AddRecordScreen';
 
+=======
+import CalendarEvent from './components/CalendarEvent';
+>>>>>>> 0311604966cba344a7de262c9544e9d07b5bbc45
 
 
 
@@ -24,6 +28,7 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
+<<<<<<< HEAD
       <MedicalRecordsProvider>
         <Stack.Navigator initialRouteName="Splash">
           <Stack.Screen name="HomeSplash" component={HomeSplash} options={{ headerShown: false }} />
@@ -43,6 +48,24 @@ const App = () => {
           
         </Stack.Navigator>
       </MedicalRecordsProvider>
+=======
+      <Stack.Navigator initialRouteName="Splash">
+        
+        <Stack.Screen name="HomeSplash" component={HomeSplash} options={{ headerShown: false }} />
+        <Stack.Screen name="Intro" component={Intro} options={{ headerShown: false }}/>
+        <Stack.Screen name="Login" component={Auth} options={{ headerShown: false }}/>
+        <Stack.Screen name="Signup" component={Auth} options={{ headerShown: false }}/>
+        <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+        <Stack.Screen name="Splash2" component={Splash2} options={{ headerShown: false }}/>
+        <Stack.Screen name="PetInput" component={PetInput} options={{ headerShown: false }}/>
+        <Stack.Screen name="MagnifyingGlassDog" component={MagnifyingGlassDog} options={{ headerShown: false }}/>
+        <Stack.Screen name="Calendar" component={Calendar} options={{ headerShown: false }}/>
+        <Stack.Screen name="UserProfile" component={UserProfile} options={{ headerShown: false }}/>
+        <Stack.Screen name="Post" component={Post} options={{ headerShown: false }}/>
+        <Stack.Screen name="CalendarEvent" component={CalendarEvent} options={{ headerShown: false }}/>
+
+      </Stack.Navigator>
+>>>>>>> 0311604966cba344a7de262c9544e9d07b5bbc45
     </NavigationContainer>
   );
 };
