@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import PetProfiles from './homeComponents/petProfiles';
 
 const Home = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
+
   const handleSignOut = () => {
     console.log('Signing out...');
   };
@@ -14,13 +15,13 @@ const Home = ({ navigation }) => {
   };
 
   const handleAddPost = (post) => {
-    setPosts(currentPosts => [post, ...currentPosts]);
+    setPosts((currentPosts) => [post, ...currentPosts]);
   };
-  
+
   return (
     <View style={styles.homeContainer}>
-    <View style={styles.topContainer}>
-      {/* Moved user profile icon to the end */}
+      <View style={styles.topContainer}>
+        {/* Moved user profile icon to the end */}
         <TouchableOpacity
           style={styles.addProfileIcon}
           onPress={() => navigation.navigate('UserProfile')}
@@ -31,10 +32,7 @@ const Home = ({ navigation }) => {
 
       <View style={styles.feedContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.logoContainer}>
-          <Image
-            source={require('../Images/justLogo.png')}
-            style={styles.homeLogo}
-          />
+          <Image source={require('../Images/justLogo.png')} style={styles.homeLogo} />
         </TouchableOpacity>
 
         <Text style={styles.myPets}> My Pets </Text>
@@ -42,34 +40,38 @@ const Home = ({ navigation }) => {
         <ScrollView style={styles.scrollView}>
           <PetProfiles />
         </ScrollView>
-        
+
         <TouchableOpacity
           style={styles.postIcon}
           onPress={() => navigation.navigate('Post')}
         >
+          <ScrollView style={styles.scrollView}>
+            {posts.map((post, index) => (
+              <View key={index} style={styles.postContainer}>
+                <Text>{post.content}</Text>
+              </View>
+            ))}
+          </ScrollView>
+        </TouchableOpacity>
 
-        <ScrollView style={styles.scrollView}>
-        {posts.map((post, index) => (
-          <View key={index} style={styles.postContainer}>
-            <Text>{post.content}</Text>
-          </View>
-        ))}
-      </ScrollView>
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Post', { onAddPost: handleAddPost })}
+          style={styles.postIcon}
+        >
+          <Icon name="paw" size={50} color="#D14E86" />
+        </TouchableOpacity>
 
-      <TouchableOpacity
-      onPress={() => navigation.navigate('Post', { onAddPost: handleAddPost })}
-      style={styles.postIcon}
-    >
-      <Icon name='paw' size={50} color="#D14E86" />
-    </TouchableOpacity>
+        {/* New Button for MedicalHomeScreen */}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('MedicalHomeScreen')}
+          style={styles.medicalHomeButton}
+        >
+          <Text style={styles.buttonText}>Go to Medical Home</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Home')} 
-          >
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
           <Icon name="home" size={30} color="black" />
         </TouchableOpacity>
 
@@ -80,17 +82,13 @@ const Home = ({ navigation }) => {
           <Icon name="search" size={30} color="black" />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Calendar')}
-        >
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Calendar')}>
           <Icon name="calendar" size={30} color="black" />
         </TouchableOpacity>
       </View>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   homeContainer: {
     flex: 1,
@@ -167,6 +165,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 5,
     marginVertical: 20,
+  },
+
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 

@@ -46,6 +46,7 @@ const PetProfiles = () => {
       name: 'Smudge',
       image: require('../../Images/petprofiles/smudge.jpg'),
   },
+  
     ];
 
     return (

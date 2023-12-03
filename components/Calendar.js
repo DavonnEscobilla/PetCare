@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#D14E86',
-    height: 100,
+    height: 150,
+   
   },
   headerText: {
     color: 'white',
