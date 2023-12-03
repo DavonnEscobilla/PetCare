@@ -8,7 +8,7 @@ import {
   Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import PetProfiles from "./homeComponents/petProfiles";
+import PetProfiles from "./homeComponents/HomePetProfile";
 
 const Home = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
