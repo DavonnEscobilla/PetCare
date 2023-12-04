@@ -21,6 +21,12 @@ const AddRecordScreen = () => {
     if (user) {
       const userId = user.uid;
 
+      // Check if any of the required fields are empty
+      if (!petName || !age || !recordType || !recordDate || !doctorAssigned) {
+        console.error('Please fill in all the required fields.');
+        return;
+      }
+
       const newRecord = {
         petName,
         age,
@@ -29,7 +35,6 @@ const AddRecordScreen = () => {
         doctorAssigned,
       };
 
-      // Add conditional logic to set specific dates for vaccination and treatment
       if (recordType === 'vaccination') {
         newRecord.dateVaccination = recordDate;
       } else if (recordType === 'treatment') {
@@ -37,7 +42,6 @@ const AddRecordScreen = () => {
       }
 
       try {
-        // Save the record to the current user's UID in Firebase Realtime Database
         await set(ref(database, `users/${userId}/records/${recordDate}`), newRecord);
 
         console.log('Record added successfully!');
@@ -45,10 +49,9 @@ const AddRecordScreen = () => {
         console.error('Error adding record:', error);
       }
 
-      // Navigate back to the RecordListScreen
       navigation.goBack();
     } else {
-      console.error('User not authenticated.'); // Handle this case according to your app's requirements
+      console.error('User not authenticated.'); 
     }
   };
 
@@ -118,7 +121,7 @@ const AddRecordScreen = () => {
 
       <Modal visible={isModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
-          <Text style={styles.modalHeading}>Select Record Type</Text>
+          <Text style={[styles.modalHeading, { color: '#D14E86' }]}>Select Record Type</Text>
           <TouchableOpacity onPress={() => selectRecordType('Vaccination')} style={styles.modalOption}>
             <Text style={{ textAlign: 'center', color: 'white' }}>Vaccination Record</Text>
           </TouchableOpacity>
@@ -148,13 +151,14 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 40,
-    borderColor: 'pink',
+    borderColor: '#D14E86',
     borderWidth: 3,
     justifyContent: 'center',
     paddingLeft: 8,
     marginBottom: 16,
     borderRadius: 10,
     margin: 10,
+    backgroundColor: '#D14E86'
   },
   header: {
     backgroundColor: '#D14E86',
@@ -198,7 +202,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
     margin: 10,
-    color: 'black',
     fontSize: 22,
     fontWeight: 'bold',
     alignSelf: 'center',

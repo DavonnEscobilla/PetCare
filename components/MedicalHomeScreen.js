@@ -7,7 +7,7 @@ import {
   StyleSheet,
   TouchableHighlight,
 } from 'react-native';
-import { auth, database } from '../firebase'; // Replace with the actual path to your firebase configuration file
+import { auth, database } from '../firebase';
 import { ref, onValue, off, remove as removeData } from 'firebase/database';
 import { AntDesign } from '@expo/vector-icons';
 
@@ -70,7 +70,6 @@ const MedicalHomeScreen = ({ navigation }) => {
     const userId = auth.currentUser.uid;
     const userRecordsRef = ref(database, `users/${userId}/records/${recordId}`);
 
-    // Remove the record from the database
     removeData(userRecordsRef)
       .then(() => {
         console.log(`Record removed from the database: ${recordId}`);
@@ -79,7 +78,6 @@ const MedicalHomeScreen = ({ navigation }) => {
         console.error('Error removing record from the database:', error);
       });
 
-    // Remove the record from the state
     setRecords((prevRecords) => prevRecords.filter((record) => record.id !== recordId));
   };
 
@@ -92,7 +90,6 @@ const MedicalHomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Header with Back Arrow Button */}
       <View style={styles.header}>
         <TouchableHighlight
           style={styles.backButton}
@@ -103,7 +100,6 @@ const MedicalHomeScreen = ({ navigation }) => {
         <Text style={styles.headerTitle}>Pet Health</Text>
       </View>
 
-      {/* Pet Images Container */}
       <View style={styles.petContainer}>
         <Text style={styles.petTitle}>My Pets</Text>
         <View style={styles.petImagesContainer}>
@@ -116,7 +112,6 @@ const MedicalHomeScreen = ({ navigation }) => {
         </View>
       </View>
 
-      {/* Content */}
       <View style={styles.contentContainer}>
         <Text style={styles.contentTitle}>My Records</Text>
         <FlatList
@@ -153,7 +148,6 @@ const MedicalHomeScreen = ({ navigation }) => {
         />
       </View>
 
-      {/* Add Record Button */}
       <TouchableHighlight
         style={styles.addButton}
         onPress={() => navigateToScreen('AddRecord')}
@@ -247,7 +241,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   contentContainer: {
-    flex: 1, // Add this line to make the content scrollable
+    flex: 1,
     marginTop: 20,
   },
   contentTitle: {
