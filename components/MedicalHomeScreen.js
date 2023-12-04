@@ -84,7 +84,9 @@ const MedicalHomeScreen = ({ navigation }) => {
   const renderPet = ({ item }) => (
     <View style={styles.petImageContainer}>
       <Image source={{ uri: item.image }} style={styles.petImage} />
-      <Text style={styles.petName}>{item.name}</Text>
+      <Text style={styles.petName} numberOfLines={1} ellipsizeMode="tail">
+        {item.name}
+      </Text>
     </View>
   );
 
@@ -118,30 +120,43 @@ const MedicalHomeScreen = ({ navigation }) => {
           data={records}
           renderItem={({ item }) => (
             <View style={styles.recordContainer}>
-              <View style={styles.recordColumn}>
+              <View style={styles.recordRow}>
                 <Text style={styles.recordLabel}>Pet Name:</Text>
-                <Text>{item.petName}</Text>
-              </View>
-              <View style={styles.recordColumn}>
-                <Text style={styles.recordLabel}>Record Type:</Text>
-                <Text>{item.recordType}</Text>
-              </View>
-              <View style={styles.recordColumn}>
-                <Text style={styles.recordLabel}>Record Date:</Text>
-                <Text>{item.recordDate}</Text>
-              </View>
-              <View style={styles.recordColumn}>
-                <Text style={styles.recordLabel}>Doctor Assigned:</Text>
-                <Text>{item.doctorAssigned}</Text>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.recordValue}>
+                  {item.petName}
+                </Text>
               </View>
 
-              {/* Remove Button */}
-              <TouchableHighlight
-                style={styles.removeButton}
-                onPress={() => removeRecord(item.id)}
-              >
-                <Text style={styles.removeButtonText}>Remove</Text>
-              </TouchableHighlight>
+              <View style={styles.recordRow}>
+                <Text style={styles.recordLabel}>Record Type:</Text>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.recordValue}>
+                  {item.recordType}
+                </Text>
+              </View>
+
+              <View style={styles.recordRow}>
+                <Text style={styles.recordLabel}>Record Date:</Text>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.recordValue}>
+                  {item.recordDate}
+                </Text>
+              </View>
+
+              <View style={styles.recordRow}>
+                <Text style={styles.recordLabel}>Doctor Assigned:</Text>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.recordValue}>
+                  {item.doctorAssigned}
+                </Text>
+              </View>
+
+              <View style={styles.recordRow}>
+                <AntDesign
+                  name="close"
+                  size={20}
+                  color="white"
+                  style={styles.removeButton}
+                  onPress={() => removeRecord(item.id)}
+                />
+              </View>
             </View>
           )}
           keyExtractor={(item) => item.id}
@@ -255,32 +270,28 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     borderRadius: 10,
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  recordColumn: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    marginRight: 10,
+  recordRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   recordLabel: {
+    flex: 1,
     fontWeight: 'bold',
     marginBottom: 5,
   },
-  removeButton: {
-    backgroundColor: '#D14E86',
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 10,
-    alignSelf: 'flex-end',
+  recordValue: {
+    flex: 2,
   },
-  removeButtonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: 'bold',
+  removeButton: {
+    padding: 5,
+    borderRadius: 50,
+    backgroundColor: '#D14E86',
+    alignSelf: 'flex-end',
   },
 });
 
