@@ -14,6 +14,7 @@ const AddRecordScreen = () => {
   const [recordDate, setRecordDate] = useState('');
   const [doctorAssigned, setDoctorAssigned] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedRecordType, setSelectedRecordType] = useState('');
 
   const handleAddRecord = async () => {
     const user = auth.currentUser;
@@ -24,6 +25,13 @@ const AddRecordScreen = () => {
       // Check if any of the required fields are empty
       if (!petName || !age || !recordType || !recordDate || !doctorAssigned) {
         console.error('Please fill in all the required fields.');
+        return;
+      }
+
+      // Validate date format
+      const dateRegex = /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s\d{4}$/;
+      if (!dateRegex.test(recordDate)) {
+        console.error('Invalid date format. Please use "Month day, year" format, e.g., "December 25, 2023".');
         return;
       }
 
@@ -64,7 +72,11 @@ const AddRecordScreen = () => {
   };
 
   const selectRecordType = (type) => {
-    setRecordType(type);
+    setSelectedRecordType(type);
+  };
+
+  const onSave = () => {
+    setRecordType(selectedRecordType);
     closeModal();
   };
 
@@ -122,14 +134,26 @@ const AddRecordScreen = () => {
       <Modal visible={isModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
           <Text style={[styles.modalHeading, { color: '#D14E86' }]}>Select Record Type</Text>
-          <TouchableOpacity onPress={() => selectRecordType('Vaccination')} style={styles.modalOption}>
+          <TouchableOpacity
+            onPress={() => selectRecordType('Vaccination')}
+            style={[
+              styles.modalOption,
+              selectedRecordType === 'Vaccination' && styles.selectedRecordType,
+            ]}
+          >
             <Text style={{ textAlign: 'center', color: 'white' }}>Vaccination Record</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => selectRecordType('Treatment')} style={styles.modalOption}>
+          <TouchableOpacity
+            onPress={() => selectRecordType('Treatment')}
+            style={[
+              styles.modalOption,
+              selectedRecordType === 'Treatment' && styles.selectedRecordType,
+            ]}
+          >
             <Text style={{ textAlign: 'center', color: 'white' }}>Treatment Record</Text>
           </TouchableOpacity>
-          <Button title="Save" onPress={closeModal} color="#D14E86" />
+          <Button title="Save" onPress={onSave} color="#D14E86" />
         </View>
       </Modal>
     </View>
@@ -158,7 +182,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 10,
     margin: 20,
-    backgroundColor: '#D14E86'
+    backgroundColor: '#D14E86',
+  },
+  selectedRecordTypeText: {
+    color: '#D14E86',
+    fontSize: 16,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    marginBottom: 10,
   },
   header: {
     backgroundColor: '#D14E86',
@@ -216,6 +247,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '50%',
     color: 'black',
+  },
+  selectedRecordType: {
+    borderWidth: 2,
+    borderColor: 'black', 
   },
 });
 
