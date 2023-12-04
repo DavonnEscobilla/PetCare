@@ -38,9 +38,9 @@ const RecordListScreen = () => {
               <Text style={styles.recordSubtitle}>Treatment Record</Text>
               <View style={styles.recordBox}>
               <View style={styles.recordInfo}>
-                <Text style={{ fontWeight: 'bold' }}>{record.petName}</Text>
-                <Text>{record.recordDate}</Text>
-                <Text>{record.doctorAssigned}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{record.petName}</Text>
+                <Text>Date: {record.recordDate}</Text>
+                <Text>Doctor Assigned: {record.doctorAssigned}</Text>
               </View>
             </View>
             </View>

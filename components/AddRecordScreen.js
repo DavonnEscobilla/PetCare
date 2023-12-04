@@ -155,9 +155,9 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     justifyContent: 'center',
     paddingLeft: 8,
-    marginBottom: 16,
+    marginBottom: 10,
     borderRadius: 10,
-    margin: 10,
+    margin: 20,
     backgroundColor: '#D14E86'
   },
   header: {
@@ -201,11 +201,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 16,
-    margin: 10,
+    margin: 20,
     fontSize: 22,
     fontWeight: 'bold',
     alignSelf: 'center',
     marginTop: 30,
+    padding: 10,
+    borderRadius: 10,
   },
   modalOption: {
     backgroundColor: '#D14E86',
@@ -213,7 +215,7 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 10,
     width: '50%',
-    color: 'white',
+    color: 'black',
   },
 });
 

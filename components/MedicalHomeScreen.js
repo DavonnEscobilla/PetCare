@@ -151,7 +151,7 @@ const MedicalHomeScreen = ({ navigation }) => {
               <View style={styles.recordRow}>
                 <AntDesign
                   name="close"
-                  size={20}
+                  size={30}
                   color="white"
                   style={styles.removeButton}
                   onPress={() => removeRecord(item.id)}
@@ -266,18 +266,25 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   recordContainer: {
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    margin: 10,
-    borderRadius: 10,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    height: 180,
+    width: '90%',
+    alignSelf: 'center',
+    marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 1,
   },
   recordRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between', // Change to space between label and value
     width: '100%',
+    marginLeft: '5%',
+    marginTop: '2%',
+    alignItems: 'center', // Align items vertically in the center
   },
   recordLabel: {
     flex: 1,
@@ -288,10 +295,16 @@ const styles = StyleSheet.create({
     flex: 2,
   },
   removeButton: {
-    padding: 5,
-    borderRadius: 50,
+    width: 30, // Define a specific width
+    height: 30, // Define a specific height
+    justifyContent: 'center', // Center content horizontally in the button
+    alignItems: 'center', // Center content vertically in the button
     backgroundColor: '#D14E86',
-    alignSelf: 'flex-end',
+    borderRadius: 15, // Half of width/height to make it circular
+    padding: 0, // Remove padding
+    position: 'absolute', // Set position to absolute
+    top: '5%', // Adjust the top position as needed
+    right: '50%', // Adjust the right position as needed
   },
 });
 
