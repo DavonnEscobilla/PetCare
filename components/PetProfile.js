@@ -14,7 +14,7 @@ import { ref, onValue, off, remove, update } from "firebase/database"; // Ensure
 import Icon from "react-native-vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
 
-const PetsComponent = () => {
+const PetsComponent = ({ onPetsChange }) => {
   const [pets, setPets] = useState([]);
 
   useEffect(() => {
@@ -145,6 +145,9 @@ const PetsComponent = () => {
       const petRef = ref(database, `users/${userId}/pets/${petId}`);
       await remove(petRef);
       console.log("Pet profile deleted:", petId);
+
+      // Call onPetsChange to update the pet list in Home.js
+      onPetsChange();
     } catch (error) {
       console.error("Error deleting pet data", error);
       Alert.alert("Error", "Failed to delete pet data.");
@@ -153,7 +156,7 @@ const PetsComponent = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Pets</Text>
+      <Text style={styles.title}>My Pets</Text>
       <FlatList
         data={pets}
         renderItem={renderItem}

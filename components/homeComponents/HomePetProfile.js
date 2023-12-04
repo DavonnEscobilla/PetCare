@@ -32,9 +32,8 @@ const PetProfiles = () => {
         <TouchableOpacity
           key={index}
           onPress={() =>
-            navigation.push("Status", {
-              name: pet.name,
-              image: pet.image, // Assuming `image` is the URL from Firebase
+            navigation.push('Home', {
+              petId: pet.id,
             })
           }
         >

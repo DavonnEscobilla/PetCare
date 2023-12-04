@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { auth, database } from "../firebase"; // Import Firebase
+import { ref, onValue, off } from "firebase/database";
 import {
   View,
   Text,
@@ -10,8 +12,10 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import PetProfiles from "./homeComponents/HomePetProfile";
 
-const Home = ({ navigation }) => {
+const Home = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
+
+  const [pets, setPets] = useState([]);
 
   const handleAddPost = (post) => {
     setPosts((currentPosts) => [post, ...currentPosts]);
@@ -22,6 +26,56 @@ const Home = ({ navigation }) => {
       currentPosts.filter((_, index) => index !== indexToDelete)
     );
   };
+
+  const fetchPetsData = () => {
+    if (auth.currentUser) {
+      const userId = auth.currentUser.uid;
+      const userPetsRef = ref(database, `users/${userId}/pets`);
+
+      const unsubscribe = onValue(
+        userPetsRef,
+        (snapshot) => {
+          const data = snapshot.val();
+          const petsArray = data
+            ? Object.keys(data).map((key) => ({
+                id: key,
+                ...data[key],
+              }))
+            : [];
+          setPets(petsArray);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+
+      return () => off(userPetsRef);
+    }
+  };
+
+  const updatePetsState = () => {
+    fetchPetsData(); // Re-fetch the pets data
+  };
+
+  useEffect(() => {
+    if (route.params?.petId) {
+      const petId = route.params.petId;
+      fetchPetPosts(petId);
+    } else {
+      setPosts([]); // Clear posts if no specific pet is selected
+    }
+  }, [route.params?.petId]);
+  
+  const fetchPetPosts = (petId) => {
+    const postsRef = ref(database, `users/${auth.currentUser.uid}/pets/${petId}/posts`);
+    onValue(postsRef, (snapshot) => {
+      const postsData = snapshot.val();
+      const loadedPosts = postsData
+        ? Object.keys(postsData).map((key) => ({ id: key, ...postsData[key] }))
+        : [];
+      setPosts(loadedPosts);
+    });
+  };  
 
   return (
     <View style={styles.homeContainer}>
@@ -40,15 +94,14 @@ const Home = ({ navigation }) => {
           style={styles.logoContainer}
         >
           <Image
-            source={require("../Images/justLogo.png")}
+            source={require("../Images/logoFINAL.png")}
             style={styles.homeLogo}
           />
         </TouchableOpacity>
-
         <Text style={styles.myPets}> My Pets </Text>
 
         <ScrollView style={styles.scrollViewPet}>
-          <PetProfiles />
+          <PetProfiles pets={pets} onPetsChange={updatePetsState} />
         </ScrollView>
 
         <ScrollView style={styles.scrollViewFeed}>
@@ -93,6 +146,7 @@ const Home = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
+          s
           onPress={() => navigation.navigate("Home")}
         >
           <Icon name="home" size={30} color="black" />
@@ -142,8 +196,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   homeLogo: {
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -167,13 +221,13 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     marginTop: 10,
-    alignSelf: 'flex-end',
-    backgroundColor: '#FFA8CD', // Example color, adjust as needed
+    alignSelf: "flex-end",
+    backgroundColor: "#FFA8CD", // Example color, adjust as needed
     padding: 8,
     borderRadius: 5,
   },
   deleteButtonText: {
-    color: 'white',
+    color: "white",
   },
   postImage: {
     width: 338,

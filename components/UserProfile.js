@@ -12,7 +12,7 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
 import { auth, database } from "../firebase";
-import { ref, set, onValue } from "firebase/database";
+import { ref, set, onValue, update } from "firebase/database";
 import { off } from "firebase/database";
 import { signOut } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,13 +22,13 @@ const saveUserData = async (newUserName, profilePicUrl) => {
     const userId = auth.currentUser.uid;
     const userRef = ref(database, "users/" + userId);
     try {
-      await set(userRef, {
+      await update(userRef, {
         username: newUserName,
         profilePicture: profilePicUrl,
       });
     } catch (error) {
-      console.error("Error saving user data: ", error);
-      Alert.alert("Error", "Failed to save user data.");
+      console.error("Error updating user data: ", error);
+      Alert.alert("Error", "Failed to update user data.");
     }
   }
 };
@@ -71,12 +71,12 @@ const UserProfile = ({ navigation }) => {
 
   const loadProfilePic = async () => {
     try {
-      const storedProfilePic = await AsyncStorage.getItem('@profilePic');
+      const storedProfilePic = await AsyncStorage.getItem("@profilePic");
       if (storedProfilePic !== null) {
         setProfilePic(storedProfilePic);
       }
     } catch (error) {
-      console.error('Error loading profile picture: ', error);
+      console.error("Error loading profile picture: ", error);
     }
   };
 
@@ -98,10 +98,10 @@ const UserProfile = ({ navigation }) => {
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
+    if (status !== "granted") {
       Alert.alert(
-        'Permission Denied',
-        'Sorry, we need camera roll permissions to upload images.'
+        "Permission Denied",
+        "Sorry, we need camera roll permissions to upload images."
       );
       return; // Early return if permission is not granted
     }
@@ -146,28 +146,28 @@ const UserProfile = ({ navigation }) => {
     try {
       const userId = auth.currentUser ? auth.currentUser.uid : null;
       if (userId) {
-        // Save to Firebase
-        await set(ref(database, 'users/' + userId), {
+        // Update user data in Firebase
+        await update(ref(database, "users/" + userId), {
           username: name,
           profilePicture: uri || profilePic,
         });
-  
+
         // Update the local state with the new username and profile picture
         setUserName(name);
         setProfilePic(uri);
-  
+
         // Save to AsyncStorage
-        await AsyncStorage.setItem('@username', name);
+        await AsyncStorage.setItem("@username", name);
         if (uri) {
-          await AsyncStorage.setItem('@profilePic', uri);
+          await AsyncStorage.setItem("@profilePic", uri);
         }
       }
     } catch (error) {
-      console.error('Error saving user data: ', error);
-      Alert.alert('Error', 'Failed to save user data.');
+      console.error("Error updating user data: ", error);
+      Alert.alert("Error", "Failed to update user data.");
     }
   };
-  
+
   return (
     <View style={styles.homeContainer}>
       {/* Header Container */}
