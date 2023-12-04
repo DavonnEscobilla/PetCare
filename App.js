@@ -15,7 +15,7 @@ import Calendar from './components/Calendar';
 import MedicalHomeScreen from './components/MedicalHomeScreen';
 import RecordListScreen from './components/RecordListScreen';
 import AddRecordScreen from './components/AddRecordScreen';
-import CalendarEvent from './components/CalendarEvent';
+
 
 
 
@@ -26,6 +26,7 @@ const App = () => {
     <NavigationContainer>
       <MedicalRecordsProvider>
         <Stack.Navigator initialRouteName="Splash">
+        
           <Stack.Screen name="HomeSplash" component={HomeSplash} options={{ headerShown: false }} />
           <Stack.Screen name="Intro" component={Intro} options={{ headerShown: false }}/>
           <Stack.Screen name="Login" component={Auth} options={{ headerShown: false }}/>
@@ -35,7 +36,7 @@ const App = () => {
           <Stack.Screen name="PetInput" component={PetInput} options={{ headerShown: false }}/>
           <Stack.Screen name="MagnifyingGlassDog" component={MagnifyingGlassDog} options={{ headerShown: false }}/>
           <Stack.Screen name="Calendar" component={Calendar} options={{ headerShown: false }}/>
-          <Stack.Screen name="CalendarEvent" component={CalendarEvent} options={{ headerShown: false }}/>
+          
           <Stack.Screen name="UserProfile" component={UserProfile} options={{ headerShown: false }}/>
           <Stack.Screen name="Post" component={Post} options={{ headerShown: false }}/>
           <Stack.Screen name="MedicalHomeScreen" component={MedicalHomeScreen} options={{ headerShown: false }}/>
