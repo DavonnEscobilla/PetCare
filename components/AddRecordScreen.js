@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
-import { useMedicalRecords } from '../components/MedicalRecordContext';
+import { auth, database } from '../firebase'; 
+import { ref, set } from 'firebase/database';
 
 const AddRecordScreen = () => {
   const navigation = useNavigation();
-  const { addRecord } = useMedicalRecords();
 
-  
   const [petName, setPetName] = useState('');
   const [age, setAge] = useState('');
   const [recordType, setRecordType] = useState('');
@@ -17,28 +15,41 @@ const AddRecordScreen = () => {
   const [doctorAssigned, setDoctorAssigned] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleAddRecord = () => {
-    const newRecord = {
-      petName,
-      age,
-      recordType,
-      recordDate,
-      doctorAssigned,
-    
-    };
-     // Add conditional logic to set specific dates for vaccination and treatment
-     if (recordType === 'vaccination') {
-      newRecord.dateVaccination = recordDate;
-    } else if (recordType === 'treatment') {
-      newRecord.dateTreatment = recordDate;
+  const handleAddRecord = async () => {
+    const user = auth.currentUser;
+
+    if (user) {
+      const userId = user.uid;
+
+      const newRecord = {
+        petName,
+        age,
+        recordType,
+        recordDate,
+        doctorAssigned,
+      };
+
+      // Add conditional logic to set specific dates for vaccination and treatment
+      if (recordType === 'vaccination') {
+        newRecord.dateVaccination = recordDate;
+      } else if (recordType === 'treatment') {
+        newRecord.dateTreatment = recordDate;
+      }
+
+      try {
+        // Save the record to the current user's UID in Firebase Realtime Database
+        await set(ref(database, `users/${userId}/records/${recordDate}`), newRecord);
+
+        console.log('Record added successfully!');
+      } catch (error) {
+        console.error('Error adding record:', error);
+      }
+
+      // Navigate back to the RecordListScreen
+      navigation.goBack();
+    } else {
+      console.error('User not authenticated.'); // Handle this case according to your app's requirements
     }
-
-    // Log the result of addRecord
-    const result = addRecord(newRecord);
-    console.log('Add Record Result:', result);
-
-    // Navigate back to the RecordListScreen
-    navigation.goBack();
   };
 
   const openModal = () => {
@@ -56,16 +67,11 @@ const AddRecordScreen = () => {
 
   const onBackPress = () => {
     navigation.goBack();
-
   };
-
 
   const Header = () => (
     <View style={styles.header}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => onBackPress()}
-      >
+      <TouchableOpacity style={styles.backButton} onPress={() => onBackPress()}>
         <AntDesign name="arrowleft" size={24} color="black" />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>Records</Text>
@@ -92,14 +98,14 @@ const AddRecordScreen = () => {
       <TouchableOpacity style={styles.button} onPress={openModal}>
         <Text style={styles.buttonText}>{recordType ? `Selected: ${recordType}` : 'Select Record Type'}</Text>
       </TouchableOpacity>
-      
+
       <TextInput
         style={styles.input}
         placeholder="Record Date"
         value={recordDate}
         onChangeText={setRecordDate}
       />
-      
+
       <TextInput
         style={styles.input}
         placeholder="Doctor Assigned"
@@ -109,7 +115,6 @@ const AddRecordScreen = () => {
       <TouchableOpacity style={styles.addRecordButton} onPress={handleAddRecord}>
         <Text style={styles.buttonText}>Add Record</Text>
       </TouchableOpacity>
-      
 
       <Modal visible={isModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
@@ -122,10 +127,7 @@ const AddRecordScreen = () => {
             <Text style={{ textAlign: 'center', color: 'white' }}>Treatment Record</Text>
           </TouchableOpacity>
           <Button title="Save" onPress={closeModal} color="#D14E86" />
-
         </View>
-
-
       </Modal>
     </View>
   );
@@ -140,12 +142,10 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 15,
-
     padding: 10,
     margin: 20,
     borderRadius: 10,
   },
-  
   button: {
     height: 40,
     borderColor: 'pink',
@@ -155,7 +155,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 10,
     margin: 10,
-    
   },
   header: {
     backgroundColor: '#D14E86',
@@ -193,14 +192,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    
   },
   modalHeading: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 16,
     margin: 10,
-
     color: 'black',
     fontSize: 22,
     fontWeight: 'bold',
@@ -213,20 +210,7 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 10,
     width: '50%',
-    color: 'white', // Add this property to change text color to white
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20, // Add margin top if needed
-    
-  },
-  button: {
-    backgroundColor: '#D14E86',
-    padding: 10,
-    margin: 20,
-    borderRadius: 10,
-    // Add other styling properties for the buttons if needed
+    color: 'white',
   },
 });
 

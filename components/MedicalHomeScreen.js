@@ -7,19 +7,17 @@ import {
   StyleSheet,
   TouchableHighlight,
 } from 'react-native';
-import { auth, database } from '../firebase';
-import { ref, onValue, off } from 'firebase/database';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { AntDesign } from '@expo/vector-icons'; // Import the back arrow icon
-import RecordListScreen from './RecordListScreen';
-
+import { auth, database } from '../firebase'; // Replace with the actual path to your firebase configuration file
+import { ref, onValue, off, remove as removeData } from 'firebase/database';
+import { AntDesign } from '@expo/vector-icons';
 
 const MedicalHomeScreen = ({ navigation }) => {
   const navigateToScreen = (screenName, params) => {
     navigation.navigate(screenName, params);
   };
-  
+
   const [pets, setPets] = useState([]);
+  const [records, setRecords] = useState([]);
 
   useEffect(() => {
     if (!auth.currentUser) {
@@ -29,8 +27,9 @@ const MedicalHomeScreen = ({ navigation }) => {
 
     const userId = auth.currentUser.uid;
     const userPetsRef = ref(database, `users/${userId}/pets`);
+    const userRecordsRef = ref(database, `users/${userId}/records`);
 
-    const unsubscribe = onValue(userPetsRef, (snapshot) => {
+    const unsubscribePets = onValue(userPetsRef, (snapshot) => {
       const data = snapshot.val();
       const petsArray = data
         ? Object.keys(data).map((key) => ({
@@ -43,8 +42,46 @@ const MedicalHomeScreen = ({ navigation }) => {
       console.error(error);
     });
 
-    return () => off(userPetsRef);
+    const unsubscribeRecords = onValue(userRecordsRef, (snapshot) => {
+      const data = snapshot.val();
+      const recordsArray = data
+        ? Object.keys(data).map((key) => ({
+            id: key,
+            ...data[key],
+          }))
+        : [];
+      setRecords(recordsArray);
+    }, (error) => {
+      console.error(error);
+    });
+
+    return () => {
+      off(userPetsRef);
+      off(userRecordsRef);
+    };
   }, []);
+
+  const removeRecord = (recordId) => {
+    if (!auth.currentUser) {
+      console.error('No user logged in');
+      return;
+    }
+
+    const userId = auth.currentUser.uid;
+    const userRecordsRef = ref(database, `users/${userId}/records/${recordId}`);
+
+    // Remove the record from the database
+    removeData(userRecordsRef)
+      .then(() => {
+        console.log(`Record removed from the database: ${recordId}`);
+      })
+      .catch((error) => {
+        console.error('Error removing record from the database:', error);
+      });
+
+    // Remove the record from the state
+    setRecords((prevRecords) => prevRecords.filter((record) => record.id !== recordId));
+  };
 
   const renderPet = ({ item }) => (
     <View style={styles.petImageContainer}>
@@ -68,20 +105,53 @@ const MedicalHomeScreen = ({ navigation }) => {
 
       {/* Pet Images Container */}
       <View style={styles.petContainer}>
-      <Text style={styles.petTitle}>My Pets</Text>
-      <View style={styles.petImagesContainer}>
-        <FlatList
-          data={pets}
-          renderItem={renderPet}
-          keyExtractor={(item) => item.id}
-          horizontal={true}
-          
-        />
-      </View>
+        <Text style={styles.petTitle}>My Pets</Text>
+        <View style={styles.petImagesContainer}>
+          <FlatList
+            data={pets}
+            renderItem={renderPet}
+            keyExtractor={(item) => item.id}
+            horizontal={true}
+          />
+        </View>
       </View>
 
       {/* Content */}
-      <RecordListScreen navigateToScreen={navigation} />
+      <View style={styles.contentContainer}>
+        <Text style={styles.contentTitle}>My Records</Text>
+        <FlatList
+          data={records}
+          renderItem={({ item }) => (
+            <View style={styles.recordContainer}>
+              <View style={styles.recordColumn}>
+                <Text style={styles.recordLabel}>Pet Name:</Text>
+                <Text>{item.petName}</Text>
+              </View>
+              <View style={styles.recordColumn}>
+                <Text style={styles.recordLabel}>Record Type:</Text>
+                <Text>{item.recordType}</Text>
+              </View>
+              <View style={styles.recordColumn}>
+                <Text style={styles.recordLabel}>Record Date:</Text>
+                <Text>{item.recordDate}</Text>
+              </View>
+              <View style={styles.recordColumn}>
+                <Text style={styles.recordLabel}>Doctor Assigned:</Text>
+                <Text>{item.doctorAssigned}</Text>
+              </View>
+
+              {/* Remove Button */}
+              <TouchableHighlight
+                style={styles.removeButton}
+                onPress={() => removeRecord(item.id)}
+              >
+                <Text style={styles.removeButtonText}>Remove</Text>
+              </TouchableHighlight>
+            </View>
+          )}
+          keyExtractor={(item) => item.id}
+        />
+      </View>
 
       {/* Add Record Button */}
       <TouchableHighlight
@@ -97,7 +167,7 @@ const MedicalHomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginBottom: 50,
+    marginBottom: 15,
   },
   header: {
     backgroundColor: '#D14E86',
@@ -105,7 +175,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingLeft: 0.6, // Adjust this to your liking for left padding
+    paddingLeft: 0.6,
   },
   backButton: {
     position: 'absolute',
@@ -130,11 +200,11 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     marginTop: 20,
-    shadowColor: '#000', // Shadow color
-    shadowOffset: { width: 0, height: 2 }, // Shadow offset for x and y
-    shadowOpacity: 0.3, // Shadow opacity
-    shadowRadius: 5, // Shadow blur radius
-    elevation: 1, // Use elevation for Android
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 1,
   },
   petImage: {
     width: 80,
@@ -167,32 +237,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20, // Add margin top if needed
-  },
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    borderRadius: 10,
-    // Add other styling properties for the buttons if needed
-  },
-  petContainer: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    height: 150,
-    width: '90%',
-    alignSelf: 'center',
-    marginTop: 20,
-    shadowColor: '#000', // Shadow color
-    shadowOffset: { width: 0, height: 2 }, // Shadow offset for x and y
-    shadowOpacity: 0.3, // Shadow opacity
-    shadowRadius: 5, // Shadow blur radius
-    elevation: 1, // Use elevation for Android
-  },
-  
   petTitle: {
     color: 'black',
     textAlign: 'left',
@@ -201,52 +245,48 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     marginLeft: 20,
     marginTop: 10,
-    
   },
-  vaccineContainer: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    height: 150,
-    width: '90%',
-    alignSelf: 'center',
+  contentContainer: {
+    flex: 1, // Add this line to make the content scrollable
     marginTop: 20,
-    shadowColor: '#000', // Shadow color
-    shadowOffset: { width: 0, height: 2 }, // Shadow offset for x and y
-    shadowOpacity: 0.3, // Shadow opacity
-    shadowRadius: 5, // Shadow blur radius
-    elevation: 1, // Use elevation for Android
   },
-
-  vaccineTitle: {
-    color: 'black',
-    textAlign: 'left',
+  contentTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  recordContainer: {
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+    margin: 10,
+    borderRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  recordColumn: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    marginRight: 10,
+  },
+  recordLabel: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  removeButton: {
+    backgroundColor: '#D14E86',
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 10,
+    alignSelf: 'flex-end',
+  },
+  removeButtonText: {
+    color: 'white',
+    textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
-    justifyContent: 'flex-start',
-    marginLeft: 20,
-    marginTop: 10,
-  },
-  groomingContainer: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    height: 150,
-    width: '90%',
-    alignSelf: 'center',
-    marginTop: 20,
-    shadowColor: '#000', // Shadow color
-    shadowOffset: { width: 0, height: 2 }, // Shadow offset for x and y
-    shadowOpacity: 0.3, // Shadow opacity
-    shadowRadius: 5, // Shadow blur radius
-    elevation: 1, // Use elevation for Android
-  },
-  groomingTitle: {
-    color: 'black',
-    textAlign: 'left',
-    fontSize: 16,
-    fontWeight: 'bold',
-    justifyContent: 'flex-start',
-    marginLeft: 20,
-    marginTop: 10,
   },
 });
 
